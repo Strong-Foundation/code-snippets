@@ -6,40 +6,40 @@ import (
 )
 
 // GetIPsInCIDR returns all IP addresses in a given CIDR block.
-func GetIPsInCIDR(cidr string) ([]string, error) {
+func GetIPsInCIDR(cidrBlock string) ([]string, error) {
 	// Parse the CIDR block
-	_, ipNet, err := net.ParseCIDR(cidr)
+	_, network, err := net.ParseCIDR(cidrBlock)
 	if err != nil {
 		return nil, err
 	}
 
-	// Calculate the number of IPs in the CIDR block
-	ips := []string{}
-	for ip := ipNet.IP.Mask(ipNet.Mask); ipNet.Contains(ip); {
-		ips = append(ips, ip.String())
+	// Calculate the list of IPs in the CIDR block
+	ipAddresses := []string{}
+	for currentIP := network.IP.Mask(network.Mask); network.Contains(currentIP); {
+		ipAddresses = append(ipAddresses, currentIP.String())
 
 		// Increment the IP address by 1
-		for j := len(ip) - 1; j >= 0; j-- {
-			ip[j]++
-			if ip[j] != 0 {
+		for byteIndex := len(currentIP) - 1; byteIndex >= 0; byteIndex-- {
+			currentIP[byteIndex]++
+			if currentIP[byteIndex] != 0 {
 				break
 			}
 		}
 	}
 
-	return ips, nil
+	return ipAddresses, nil
 }
 
 func main() {
-	cidr := "192.168.1.0/29"
-	ips, err := GetIPsInCIDR(cidr)
+	cidrBlock := "192.168.1.0/29"
+	ipAddresses, err := GetIPsInCIDR(cidrBlock)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 
-	// Print all IPs in the CIDR
-	for _, ip := range ips {
+	// Print all IP addresses in the CIDR block
+	for _, ip := range ipAddresses {
 		fmt.Println(ip)
 	}
 }
