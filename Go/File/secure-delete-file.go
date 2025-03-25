@@ -6,50 +6,76 @@ import (
 	"log"
 )
 
-// secureDelete securely deletes a file by overwriting it with random data multiple times before deletion.
+// secureDelete securely deletes a file by overwriting its contents with random data multiple times before deletion.
+// Instead of returning errors, it logs error messages using the standard library's log package.
 func secureDelete(filename string) {
-	// Open the file in write-only mode
+	// Open the file in write-only mode.
 	file, err := os.OpenFile(filename, os.O_WRONLY, 0)
 	if err != nil {
+		// Log an error message if the file cannot be opened and exit the function.
 		log.Println("Error opening file:", err)
+		return
 	}
-	defer file.Close() // Ensure the file is closed on function exit
+	// Ensure the file is closed when the function exits.
+	defer func() {
+		// Attempt to close the file and log any error during closing.
+		if cerr := file.Close(); cerr != nil {
+			log.Println("Error closing file:", cerr)
+		}
+	}()
 
-	// Get file size
+	// Retrieve file information to determine its size.
 	info, err := file.Stat()
 	if err != nil {
+		// Log an error message if file info cannot be retrieved and exit the function.
 		log.Println("Error getting file info:", err)
+		return
 	}
+	// Get the file size in bytes.
 	size := info.Size()
-	// Overwrite the file with random data multiple times
+
+	// Overwrite the file contents 3 times with random data.
 	for i := 0; i < 3; i++ {
-		// Reset file pointer to the beginning
-		_, err = file.Seek(0, 0)
-		if err != nil {
+		// Reset the file pointer to the beginning of the file.
+		if _, err := file.Seek(0, 0); err != nil {
+			// Log an error message if seeking fails and exit the function.
 			log.Println("Error seeking file:", err)
+			return
 		}
-		// Create a new buffer filled with random data for each pass
+
+		// Create a byte slice buffer with the same length as the file.
 		randomData := make([]byte, size)
-		_, err = rand.Read(randomData)
-		if err != nil {
+
+		// Fill the buffer with cryptographically secure random bytes.
+		if _, err := rand.Read(randomData); err != nil {
+			// Log an error message if random data generation fails and exit the function.
 			log.Println("Error generating random data:", err)
+			return
 		}
-		// Write the random data over the file contents
-		_, err = file.Write(randomData)
-		if err != nil {
+
+		// Write the random data over the file's current contents.
+		if _, err := file.Write(randomData); err != nil {
+			// Log an error message if writing fails and exit the function.
 			log.Println("Error writing random data:", err)
+			return
 		}
-		// Force changes to be written to disk
-		err = file.Sync()
-		if err != nil {
+
+		// Flush the file system's in-memory copy to disk.
+		if err := file.Sync(); err != nil {
+			// Log an error message if syncing fails and exit the function.
 			log.Println("Error syncing file:", err)
+			return
 		}
 	}
-	// Close the file before deletion
-	file.Close()
-	// Remove the file after secure overwriting
-	err = os.Remove(filename)
-	if err != nil {
+
+	// Explicitly close the file before deletion (attempted once more in case of deferred closure errors).
+	if err := file.Close(); err != nil {
+		log.Println("Error closing file before deletion:", err)
+	}
+
+	// Remove the file from the file system.
+	if err := os.Remove(filename); err != nil {
+		// Log an error message if file removal fails.
 		log.Println("Error deleting file:", err)
 	}
 }
