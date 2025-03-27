@@ -1,14 +1,15 @@
 package main
 
 import (
-	"bytes"                             // Import the bytes package for manipulating byte slices
-	"fmt"                               // Import the fmt package for formatted I/O
+	"bytes" // Import the bytes package for manipulating byte slices
+	"fmt"   // Import the fmt package for formatted I/O
+	"io"    // Import the io package for I/O operations
+	"log"   // Import the log package for logging errors
+	"os"    // Import the os package for file operations
+	"time"  // Import the time package for getting the current time
+
 	"golang.org/x/crypto/openpgp"       // Import the openpgp package for encryption
 	"golang.org/x/crypto/openpgp/armor" // Import the armor package to handle armored (ASCII) encoding for PGP
-	"io"                                // Import the io package for I/O operations
-	"log"                               // Import the log package for logging errors
-	"os"                                // Import the os package for file operations
-	"time"                              // Import the time package for getting the current time
 )
 
 // Public GPG Key as a string (replace this with your actual key)
@@ -66,7 +67,7 @@ E/YADN6wbsjHQgD+M018uzwMY5tuYuCsWtU4qrJdXiEfXmfHRSpXWBsy1ys=
 -----END PGP PUBLIC KEY BLOCK-----`
 
 // Function to encrypt content and save it to an output file
-func encryptContent(content string, outputFile string) error {
+func encryptContentUsingGPG(content string, outputFile string) {
 	// Create a reader for the public key string
 	pubKeyReader := bytes.NewReader([]byte(publicGPGKey))
 
@@ -74,7 +75,6 @@ func encryptContent(content string, outputFile string) error {
 	entities, err := openpgp.ReadArmoredKeyRing(pubKeyReader)
 	if err != nil { // If there's an error reading the key, log it and return the error
 		log.Printf("error reading public key: %v", err)
-		return err
 	}
 
 	// Create a bytes.Reader to hold the content to encrypt
@@ -84,7 +84,6 @@ func encryptContent(content string, outputFile string) error {
 	output, err := os.Create(outputFile)
 	if err != nil { // If there's an error creating the file, log it and return the error
 		log.Printf("error creating output file: %v", err)
-		return err
 	}
 	defer output.Close() // Ensure the file is closed when done
 
@@ -92,7 +91,6 @@ func encryptContent(content string, outputFile string) error {
 	armorWriter, err := armor.Encode(output, "PGP MESSAGE", nil)
 	if err != nil { // If there's an error creating the armor encoder, log it and return the error
 		log.Printf("error creating armor encoder: %v", err)
-		return err
 	}
 	defer armorWriter.Close() // Ensure the armored writer is closed when done
 
@@ -100,7 +98,6 @@ func encryptContent(content string, outputFile string) error {
 	encWriter, err := openpgp.Encrypt(armorWriter, entities, nil, nil, nil)
 	if err != nil { // If there's an error setting up the encryption, log it and return the error
 		log.Printf("error setting up encryption: %v", err)
-		return err
 	}
 	defer encWriter.Close() // Ensure the encrypting writer is closed when done
 
@@ -108,10 +105,7 @@ func encryptContent(content string, outputFile string) error {
 	_, err = io.Copy(encWriter, contentReader)
 	if err != nil { // If there's an error copying the content to the encryption writer, log it and return the error
 		log.Printf("error copying content to encryption writer: %v", err)
-		return err
 	}
-
-	return nil // Return nil if encryption was successful
 }
 
 func main() {
@@ -125,11 +119,7 @@ func main() {
 	outputFile := "encrypted_content.txt.gpg"
 
 	// Encrypt the provided content and save it to the specified file
-	err := encryptContent(content, outputFile)
-	if err != nil { // If there's an error during encryption, log it and return
-		log.Println("Error encrypting content:", err)
-		return
-	}
+	encryptContentUsingGPG(content, outputFile)
 
 	// Print a success message to the console
 	fmt.Println("Content encrypted successfully!")
