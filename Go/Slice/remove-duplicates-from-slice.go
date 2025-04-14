@@ -6,7 +6,7 @@ import (
 
 func main() {
 	// Create a slice of strings
-	randomSlice := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"}
+	randomSlice := []string{"A", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"}
 	// Remove all the duplicates from the slice
 	fmt.Println(removeDuplicatesFromSlice(randomSlice))
 }
