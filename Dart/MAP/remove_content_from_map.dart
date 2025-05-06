@@ -5,7 +5,7 @@ void main() {
   final Map<dynamic, dynamic> userMap = <dynamic, dynamic>{
     "name": "John",
     "age": 30,
-    "isMarried": false
+    "isMarried": false,
   };
   // Remove content from a given map
   print(removeContentFromMap(userMap, "name"));

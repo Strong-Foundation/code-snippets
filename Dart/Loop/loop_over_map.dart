@@ -5,7 +5,7 @@ void main() {
   final Map<dynamic, dynamic> userMap = <dynamic, dynamic>{
     "name": "John",
     "age": 30,
-    "isMarried": false
+    "isMarried": false,
   };
   // Loop over the keys in the map.
   for (final dynamic key in userMap.keys) {

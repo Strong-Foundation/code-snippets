@@ -6,7 +6,7 @@ void main() {
   final Map<dynamic, dynamic> originalMap = <dynamic, dynamic>{
     "name": "John Doe",
     "age": 30,
-    "city": "New York"
+    "city": "New York",
   };
   // Conver the map to JSON
   print(convertMapToJson(originalMap));

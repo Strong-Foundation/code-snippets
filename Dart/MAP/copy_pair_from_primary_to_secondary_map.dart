@@ -7,7 +7,7 @@ void main() {
   };
   final Map<dynamic, dynamic> secondMap = <dynamic, dynamic>{
     "age": 30,
-    "isMarried": false
+    "isMarried": false,
   };
   // Copy the first map to the second.
   print(copyPairFromPrimaryToSecondaryMap(firstMap, secondMap));

@@ -5,7 +5,7 @@ void main() {
   final Map<dynamic, dynamic> userMap = <dynamic, dynamic>{
     "name": "John",
     "age": 30,
-    "isMarried": false
+    "isMarried": false,
   };
   // Get the key of a given value from the map.
   print(getTheValueOfKeyInMap(userMap, 30));
