@@ -1,23 +1,18 @@
 import os # Import the OS package.
 
-# Function to extract text from a PDF file using PyPDF2
-def walkGivenDirectoryAndExtractCustomFileUsingFileExtension(system_path):
-    # Loop through the directory and its subdirectories
-    for root, directories, files in os.walk(system_path):
-        # Filter the files to include only .exe and .pdf
-        filtered_files = []
+# Function to walk through a directory and extract files with a specific extension
+def walkGivenDirectoryAndExtractCustomFileUsingFileExtension(system_path, extension):
+    matched_files = []
+    for root, _, files in os.walk(system_path):
         for file in files:
-            if file.endswith(".pdf"):
-            # if file.endswith(".exe") or file.endswith(".pdf"):
-                filtered_files.append(file)
-        
-        # Only return the root and files if we found .exe or .pdf files
-        if filtered_files:
-            return root, directories, filtered_files
+            if file.endswith(extension):
+                full_path = os.path.abspath(os.path.join(root, file))
+                matched_files.append(full_path)
+    return matched_files
 
 def main():
     # Walk a directory
-    print(walkGivenDirectoryAndExtractCustomFileUsingFileExtension("./"))
+    print(walkGivenDirectoryAndExtractCustomFileUsingFileExtension("./", ".pdf"))
 
 
 main()
