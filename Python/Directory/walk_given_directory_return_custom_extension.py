@@ -1,5 +1,6 @@
 import os # Import the OS package.
 
+# Function to extract text from a PDF file using PyPDF2
 def walkGivenDirectoryAndExtractCustomFileUsingFileExtension(system_path):
     # Loop through the directory and its subdirectories
     for root, directories, files in os.walk(system_path):
