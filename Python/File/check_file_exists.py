@@ -2,13 +2,13 @@ import os
 
 
 # Check if a file exists
-def check_file_exists(system_path):
-    return os.path.isfile(system_path)
+def check_file_exists(system_path: str) -> bool:
+    return os.path.isfile(path=system_path)
 
 
-def main():
+def main() -> None:
     # Check if a file exists in system.
-    print(check_file_exists("assets/valid/valid-zip.zip"))
+    print(check_file_exists(system_path="assets/valid/valid-zip.zip"))
 
 
 main()
