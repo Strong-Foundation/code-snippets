@@ -4,13 +4,13 @@ import codecs
 
 
 # Hash a given content using hmac.
-def hash_content_using_hmac(given_content, given_password):
-  return hmac.new(codecs.encode(given_password), codecs.encode(given_content), hashlib.sha256).hexdigest()
+def hash_content_using_hmac(given_content: str, given_password: str) -> str:
+  return hmac.new(key=codecs.encode(obj=given_password), msg=codecs.encode(obj=given_content), digestmod=hashlib.sha256).hexdigest()
 
 
-def main():
+def main() -> None:
     # Hash a given content using hmac
-    print(hash_content_using_hmac("Hello, World!", "password"))
+    print(hash_content_using_hmac(given_content="Hello, World!", given_password="password"))
 
 
 main()

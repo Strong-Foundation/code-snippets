@@ -2,14 +2,14 @@ import os
 
 
 # Walk a directory and return everything.
-def walkGivenDirectory(system_path):
-    for root, directory, files in os.walk(system_path):
+def walkGivenDirectory(system_path: str) -> tuple[str, list[str], list[str]] | None:
+    for root, directory, files in os.walk(top=system_path):
         return root, directory, files
 
 
-def main():
+def main() -> None:
     # Walk a directory
-    print(walkGivenDirectory("assets/valid/aDT5V7223266kFX4uv9P9o7ovi6tdWhv/"))
+    print(walkGivenDirectory(system_path="assets/valid/aDT5V7223266kFX4uv9P9o7ovi6tdWhv/"))
 
 
 main()
