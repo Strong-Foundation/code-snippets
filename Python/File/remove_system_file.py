@@ -2,8 +2,8 @@ import os
 
 
 # Remove a file from the system.
-def remove_system_file(system_path):
-    os.remove(system_path)
+def remove_system_file(system_path: str) -> None:
+    os.remove(path=system_path)
 
 
 def main():
