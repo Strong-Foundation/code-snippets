@@ -1,6 +1,6 @@
 # Append and write some content to a file.
-def append_write_to_file(system_path, content):
-    file = open(system_path, "a")
+def append_write_to_file(system_path: str, content: str):
+    file = open(file=system_path, mode="a")
     file.write(content)
     file.close()
 
