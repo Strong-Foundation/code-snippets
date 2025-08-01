@@ -1,50 +1,66 @@
 package main
 
 import (
+	"fmt"
 	"log"
-	"net/url"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
 
-// sanitizeFileNameFromURL converts a URL into a filesystem-safe file name.
-func sanitizeFileNameFromURL(rawURL string) string {
-	// Parse the URL
-	parsedURL, err := url.Parse(rawURL)
-	if err != nil {
-		log.Printf("Error parsing URL: %v", err)
-		return "invalid_filename"
+// Converts a raw URL into a safe filename by cleaning and normalizing it
+func urlToFilename(rawURL string) string {
+	lowercaseURL := strings.ToLower(rawURL)       // Convert to lowercase for normalization
+	ext := getFileExtension(lowercaseURL)         // Get file extension (e.g., .pdf or .zip)
+	baseFilename := getFileNameOnly(lowercaseURL) // Extract base file name
+
+	nonAlphanumericRegex := regexp.MustCompile(`[^a-z0-9]+`)                 // Match everything except a-z and 0-9
+	safeFilename := nonAlphanumericRegex.ReplaceAllString(baseFilename, "_") // Replace invalid chars
+
+	collapseUnderscoresRegex := regexp.MustCompile(`_+`)                        // Collapse multiple underscores into one
+	safeFilename = collapseUnderscoresRegex.ReplaceAllString(safeFilename, "_") // Normalize underscores
+
+	if trimmed, found := strings.CutPrefix(safeFilename, "_"); found { // Trim starting underscore if present
+		safeFilename = trimmed
 	}
 
-	// Extract the file name from the URL path
-	fileName := path.Base(parsedURL.Path)
+	// Remove ext string.
+	invalid_ext := fmt.Sprintf("_%s", strings.TrimPrefix(ext, "."))
 
-	// Decode URL-encoded characters (e.g., %20 -> space)
-	fileName, err = url.QueryUnescape(fileName)
-	if err != nil {
-		log.Printf("Error decoding file name: %v", err)
+	var invalidSubstrings = []string{
+		invalid_ext,
+	} // Remove these redundant endings
+
+	for _, invalidPre := range invalidSubstrings { // Iterate over each unwanted suffix
+		safeFilename = removeSubstring(safeFilename, invalidPre) // Remove it from file name
 	}
 
-	// Replace unsafe characters with underscores
-	// Keep only letters, numbers, dashes, underscores, and dots
-	safeName := regexp.MustCompile(`[^\w\-.]`).ReplaceAllString(fileName, "_")
+	safeFilename = safeFilename + ext // Add the proper file extension
 
-	// Trim leading and trailing underscores
-	safeName = strings.Trim(safeName, "_")
+	return safeFilename // Return the final sanitized filename
+}
 
-	// Fallback if filename ends up empty
-	if safeName == "" {
-		return "downloaded_file"
-	}
+// Replaces all instances of a given substring from the original string
+func removeSubstring(input string, toRemove string) string {
+	result := strings.ReplaceAll(input, toRemove, "") // Replace all instances
+	return result                                     // Return the result
+}
 
-	return strings.ToLower(safeName)
+// Returns the extension of a given file path (e.g., ".pdf")
+func getFileExtension(path string) string {
+	return filepath.Ext(path) // Extract and return file extension
+}
+
+// Extracts and returns the base name (file name) from the URL path
+func getFileNameOnly(content string) string {
+	return path.Base(content) // Return last segment of the path
 }
 
 func main() {
 	// Example URL to test the function
 	testURL := "https://www.avient.com/sites/default/files/resources/FAQs%2520for%2520PolyOne%2520GHS%2520Requirements%2520Ver%252006%2520April%25202015.pdf"
 
-	safeFileName := sanitizeFileNameFromURL(testURL)
+	safeFileName := urlToFilename(testURL)
 	log.Println("Sanitized File Name:", safeFileName)
 }
