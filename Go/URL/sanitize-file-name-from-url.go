@@ -43,8 +43,7 @@ func urlToFilename(rawURL string) string {
 
 // Replaces all instances of a given substring from the original string
 func removeSubstring(input string, toRemove string) string {
-	result := strings.ReplaceAll(input, toRemove, "") // Replace all instances
-	return result                                     // Return the result
+	return strings.ReplaceAll(input, toRemove, "") // Return the result, Replace all instances
 }
 
 // Returns the extension of a given file path (e.g., ".pdf")
@@ -60,7 +59,6 @@ func getFileNameOnly(content string) string {
 func main() {
 	// Example URL to test the function
 	testURL := "https://www.avient.com/sites/default/files/resources/FAQs%2520for%2520PolyOne%2520GHS%2520Requirements%2520Ver%252006%2520April%25202015.pdf"
-
 	safeFileName := urlToFilename(testURL)
 	log.Println("Sanitized File Name:", safeFileName)
 }
