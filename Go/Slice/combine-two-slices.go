@@ -15,7 +15,6 @@ func main() {
 
 // Combine two slices together and return the new slice.
 func combineMultipleSlices(sliceOne []string, sliceTwo []string) []string {
-	var combinedSlice []string
-	combinedSlice = append(sliceOne, sliceTwo...)
+	combinedSlice := append(sliceOne, sliceTwo...)
 	return combinedSlice
 }
